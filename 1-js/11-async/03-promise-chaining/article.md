@@ -1,13 +1,13 @@
 
-# Promises chaining
+# Цепочка промисов
 
-Let's return to the problem mentioned in the chapter <info:callbacks>: we have a sequence of asynchronous tasks to be done one after another. For instance, loading scripts. How can we code it well?
+Вернемся к проблеме, которую мы затронули в главе <info:callbacks>: у нас есть список асинхронных задач, которые мы хотим выполнить одну за другой. Например, загрузить скрипты. Как нам это закодить?
 
-Promises provide a couple of recipes to do that.
+С промисами это можно сделать несколькими способами.
 
-In this chapter we cover promise chaining.
+В этой главе мы рассмотрим цепочку промисов.
 
-It looks like this:
+Она выглядит вот так:
 
 ```js run
 new Promise(function(resolve, reject) {
@@ -32,23 +32,23 @@ new Promise(function(resolve, reject) {
 });
 ```
 
-The idea is that the result is passed through the chain of `.then` handlers.
+Смысл в том, что результат пробрасывается по цепочке `.then`-обработчиков.
 
-Here the flow is:
-1. The initial promise resolves in 1 second `(*)`,
-2. Then the `.then` handler is called `(**)`.
-3. The value that it returns is passed to the next `.then` handler `(***)`
-4. ...and so on.
+Рассмотрим по шагам:
+1. Промис успешно завершается через 1 секунду `(*)`,
+2. Затем вызывается `.then`-обработчик `(**)`.
+3. Значение, которое он возвращает, передается следующему `.then`-обработчику `(***)`
+4. И так далее...
 
-As the result is passed along the chain of handlers, we can see a sequence of `alert` calls: `1` -> `2` -> `4`.
+Так как результат передается по цепочке, мы увидим череду вызовов функции `alert`: `1` -> `2` -> `4`
 
 ![](promise-then-chain.png)
 
-The whole thing works, because a call to `promise.then` returns a promise, so that we can call the next `.then` on it.
+Это работает, потому что вызов `promise.then` возвращает другой промис, у которого мы также можем вызвать метод `.then`.
 
-When a handler returns a value, it becomes the result of that promise, so the next `.then` is called with it.
+Когда обработчик возвращает значение, оно становится значением промиса, поэтому мы можем получить его в следующем `.then`-обработчике.
 
-To make these words more clear, here's the start of the chain:
+В подтверждение слов давайте наглядно рассмотрим начало цепочки:
 
 ```js run
 new Promise(function(resolve, reject) {
@@ -64,11 +64,11 @@ new Promise(function(resolve, reject) {
 // .then…
 ```
 
-The value returned by `.then` is a promise, that's why we are able to add another `.then` at `(2)`. When the value is returned in `(1)`, that promise becomes resolved, so the next handler runs with the value.
+Значение, которое возвращает `.then` - промис, поэтому в `(2)` мы можем вызвать следующий `.then`. Когда значение попадёт в `(1)`, этот промис успешно разрешится, поэтому следующий обработчик тоже получит значение.
 
-**A classic newbie error: technically we can also add many `.then` to a single promise. This is not chaining.**
+**Классическая ошибка новичка: технически, мы можем добавить несколько `.then` одному промису. Но цепочкой это назвать нельзя.**
 
-For example:
+Например:
 ```js run
 let promise = new Promise(function(resolve, reject) {
   setTimeout(() => resolve(1), 1000);
